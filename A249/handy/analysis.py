@@ -104,7 +104,7 @@ maxy = np.argmin(allany[1])
 maxz = np.argmin(allanz[1])
 
 
-poptx, pcovx = opt.curve_fit(func, allanx[0][0:maxx], allanx[1][0:maxx])
+poptx, pcovx = opt.curve_fit(func, allanx[0][0:maxx], allanx[1][0:maxx], full_output=True)
 popty, pcovy = opt.curve_fit(func, allany[0][0:maxy], allany[1][0:maxy])
 poptz, pcovz = opt.curve_fit(func, allanz[0][0:maxz], allanz[1][0:maxz])
 
