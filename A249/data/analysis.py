@@ -13,6 +13,9 @@ def chi2red(y, yfit, err, ndeg):
 
 exp = [2,4,7,9,12,14,16,19,21,23,25,27,32,34,36,38]
 
+
+c = [] 
+dc = []
 for i in exp:
     with open(f"20230223-0002/20230223-0002_{i:02d}.csv") as f:
         contents = f.readlines()
@@ -33,10 +36,17 @@ for i in exp:
         plt.scatter(times, volts, s=5)
         #plt.errorbar(times, volts, err, alpha= 0.01, color="r", capsize=3,  lw = 0, markeredgewidth=10)
         #plt.fill_between(times, volts-err, volts+err)
-        plt.plot(times_un,rdown(times_un,*a), color="k", label="fit")
-        plt.xlabel(r"time in $\mu$s")
-        plt.ylabel("volts in mV")
-        plt.legend()
-        plt.savefig(f"ringdown_{i}.png")
+        #plt.plot(times_un,rdown(times_un,*a), color="k", label="fit")
+        #plt.xlabel(r"time in $\mu$s")
+        #plt.ylabel("volts in mV")
+        #plt.legend()
+        #plt.savefig(f"ringdown_{i}.png")
         plt.clf()
-        print(f"{a[0]:.9f} $\pm$ { (np.diag(b)**2)[0]:.1e} &{a[1]:.5f} $\pm$ { (np.diag(b)**2)[1]:.1e} &{a[2]:.11f} $\pm$ { (np.diag(b)**2)[2]:.1e} & {a[3]:.7f} $\pm$ { (np.diag(b)**2)[3]:.1e}& {chi2red(volts, rdown(times, *a),err, len(volts)-4):.02f}\\\\")
+        c.append(a[2])
+        dc.append(b[2][2]**2)
+        #print(f"{a[0]:.9f} $\pm$ { (np.diag(b)**2)[0]:.1e} &{a[1]:.5f} $\pm$ { (np.diag(b)**2)[1]:.1e} &{a[2]:.11f} $\pm$ { (np.diag(b)**2)[2]:.1e} & {a[3]:.7f} $\pm$ { (np.diag(b)**2)[3]:.1e}& {chi2red(volts, rdown(times, *a),err, len(volts)-4):.02f}\\\\")
+
+print(f"meanc {np.mean(c)} pm {np.mean(dc)}")
+print(f"r = {np.exp(-0.99*np.mean(c)/(2*3e8))} pm {np.exp(-0.99*np.mean(c)/(2*3e8))*np.sqrt(0.99*np.mean(dc)**2/(2*3e8) + 0.005**2*np.mean(c)/(2*3e8))}")
+r = np.exp(-0.99*np.mean(c)/(2*3e8))
+print(f"F = {np.pi* np.sqrt(np.exp(-0.99*np.mean(c)/(2*3e8))) / (1- np.exp(-0.99*np.mean(c)/(2*3e8)))} pm {np.exp(-0.99*np.mean(c)/(2*3e8))*np.sqrt(0.99*np.mean(dc)**2/(2*3e8) + 0.005**2*np.mean(c)/(2*3e8)) * (0.5*np.pi/(np.sqrt(r)*(1-r)) )}")
